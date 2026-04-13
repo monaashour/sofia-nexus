@@ -1,0 +1,17 @@
+@import "tailwindcss";
+
+:root {
+  --color-primary: #0B1F3A;
+  --color-primary-dark: #060F1F;
+  --color-accent: #FF6B2C;
+  --color-accent-hover: #E65A20;
+  --color-light: #F5F7FA;
+  --color-text-secondary: #6B7280;
+
+  --font-sans: "Inter", sans-serif;
+  --font-heading: "Sora", sans-serif;
+}
+
+body {
+  font-family: var(--font-sans);
+}
