@@ -12,7 +12,7 @@ export default function HomePage() {
       <main className="mx-auto flex w-full max-w-7xl flex-1 overflow-visible px-4 py-3 md:overflow-hidden md:px-6 md:py-2">
         <section className="grid w-full gap-4 md:grid-cols-[0.85fr_1.15fr]">
           <div className="flex items-center">
-            <div className="w-full rounded-2xl border border-slate-200 bg-white/80 px-4 py-4 shadow-sm backdrop-blur-sm md:px-5 md:py-5">
+            <div>
               <p className="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-[#FF6B2C]">AI Strategy Partner</p>
               <h2 className="mb-2 text-xl font-semibold text-[#0B1F3A] sm:text-2xl md:text-3xl">
                 Welcome to <span className="text-[#FF6B2C]">Sofia Nexus</span>
