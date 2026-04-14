@@ -28,7 +28,7 @@ const cards = [
     subtitle: 'Three principles guide us',
     body: (
       <>
-        <p className="text-sm text-slate-300">Three principles guide everything:</p>
+        <p className="text-sm text-slate-300">Three principles guide us</p>
         <ul className="mt-3 space-y-1 text-left text-sm text-slate-300">
           <li><strong className="text-white">Clarity</strong>: Transparent and aligned</li>
           <li><strong className="text-white">Scalability</strong>: Built to grow</li>
@@ -107,7 +107,7 @@ export default function AboutPage() {
           {cards.map((card) => (
             <div
               key={card.title}
-              className="min-h-[280px]"
+              className="min-h-[260px]"
               style={{ perspective: '1000px' }}
             >
               <div

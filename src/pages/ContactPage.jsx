@@ -102,7 +102,7 @@ export default function ContactPage() {
           {cards.map((card) => (
             <div
               key={card.title}
-              className="min-h-[280px]"
+              className="min-h-[260px]"
               style={{ perspective: '1000px' }}
             >
               <div
