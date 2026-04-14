@@ -78,8 +78,8 @@ export default function AboutPage() {
         <div className="mx-auto flex min-h-[95px] max-w-7xl items-start justify-between px-4 pt-2 pb-2 sm:px-6 md:min-h-[125px] md:pt-3 md:pb-2">
           <div className="max-w-2xl">
             <h1 className="text-2xl font-bold leading-snug sm:text-3xl md:text-4xl">
-              Sofia Nexus from<br />
-              complexity to clarity
+              Sofia Nexus From<br />
+              Complexity To Clarity
             </h1>
             <p className="mt-1 text-xs text-slate-300 sm:text-sm md:text-base">
               We design, deliver, and scale AI-driven systems with clarity and confidence.
