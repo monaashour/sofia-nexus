@@ -78,13 +78,27 @@ export default function HomePage() {
               <h3 className="mb-1 text-xl font-semibold text-[#0B1F3A]">Get Started</h3>
               <p className="mb-3 text-xs text-slate-500">Choose your profile to begin</p>
               <div className="space-y-3">
-                <button className="w-full rounded-lg bg-[#0B1F3A] px-4 py-2.5 text-left font-medium text-white transition hover:bg-[#FF6B2C]">
+                <button
+                  type="button"
+                  className="w-full rounded-lg bg-[#0B1F3A] px-4 py-2.5 text-left font-medium text-white transition hover:bg-[#FF6B2C]"
+                >
                   <span className="flex items-center gap-2 text-sm"><Building2 className="h-4 w-4" />Enterprise Customer</span>
                   <span className="block text-xs font-normal text-slate-300">Modernise &amp; scale with AI</span>
                 </button>
-                <button className="w-full rounded-lg bg-[#0B1F3A] px-4 py-2.5 text-left font-medium text-white transition hover:bg-[#FF6B2C]">
+                <button
+                  type="button"
+                  className="w-full rounded-lg bg-[#0B1F3A] px-4 py-2.5 text-left font-medium text-white transition hover:bg-[#FF6B2C]"
+                >
                   <span className="flex items-center gap-2 text-sm"><Handshake className="h-4 w-4" />AI Partner</span>
                   <span className="block text-xs font-normal text-slate-300">Join our trusted network</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => { window.location.hash = '/coming-soon' }}
+                  className="w-full rounded-lg border border-[#FF6B2C] bg-white px-4 py-2.5 text-left font-medium text-[#0B1F3A] transition hover:border-[#0B1F3A] hover:bg-[#FF6B2C] hover:text-white"
+                >
+                  <span className="flex items-center gap-2 text-sm">Sofia Nexus Lead Services</span>
+                  <span className="block text-xs font-normal text-slate-500">Generate qualified leads, powered by AI</span>
                 </button>
               </div>
             </div>

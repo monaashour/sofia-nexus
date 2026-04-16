@@ -3,6 +3,7 @@ import HomePage from './pages/HomePage'
 import SolutionsPage from './pages/SolutionsPage'
 import AboutPage from './pages/AboutPage'
 import ContactPage from './pages/ContactPage'
+import ComingSoonPage from './pages/ComingSoonPage'
 
 function getRouteFromHash() {
   const hash = window.location.hash.replace('#', '')
@@ -28,6 +29,12 @@ export default function App() {
 
   if (route === '/contact') {
     return <ContactPage />
+  }
+
+  if (route.startsWith('/coming-soon')) {
+    const params = new URLSearchParams(route.slice('/coming-soon'.length))
+    const type = params.get('type') || 'leads'
+    return <ComingSoonPage scope={type} />
   }
 
   return <HomePage />

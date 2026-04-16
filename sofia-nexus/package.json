@@ -1,13 +1,12 @@
 {
   "name": "sofia-nexus",
-  "private": true,
-  "version": "0.0.0",
-  "type": "module",
+  "version": "1.0.0",
+  "description": "A React application using Vite and Tailwind CSS",
+  "main": "src/main.tsx",
   "scripts": {
-    "dev": "vite --open",
+    "dev": "vite",
     "build": "vite build",
-    "lint": "eslint .",
-    "preview": "vite preview"
+    "serve": "vite preview"
   },
   "dependencies": {
     "lucide-react": "^1.8.0",
@@ -27,5 +26,8 @@
     "globals": "^17.4.0",
     "tailwindcss": "^4.2.2",
     "vite": "^8.0.4"
-  }
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
 }
