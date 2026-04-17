@@ -12,7 +12,7 @@ import uuid
 from email.message import EmailMessage
 
 from dotenv import load_dotenv
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
@@ -20,6 +20,7 @@ from pydantic import BaseModel, Field
 load_dotenv(Path(__file__).with_name(".env"))
 
 DB_PATH = Path(os.getenv("SOFIA_DB_PATH", Path(__file__).with_name("sofia_nexus.db")))
+UPLOADS_DIR = Path(__file__).with_name("uploads")
 SESSION_TOKENS: dict[str, str] = {}
 
 
@@ -44,6 +45,7 @@ class EnterpriseOnboardingRequest(BaseModel):
     goals: list[str] = []
     priority: str = ""
     expectations: str = ""
+    documents: list[str] = []
     contact: ContactInfo
 
 
@@ -341,6 +343,34 @@ init_db()
 @app.get("/api/health")
 def health() -> dict[str, str]:
     return {"status": "ok"}
+
+
+_ALLOWED_UPLOAD_EXTENSIONS = {".pdf", ".doc", ".docx", ".xls", ".xlsx", ".png", ".jpg", ".jpeg"}
+_MAX_UPLOAD_BYTES = 10 * 1024 * 1024  # 10 MB
+_MAX_UPLOAD_FILES = 5
+
+
+@app.post("/api/upload-documents")
+async def upload_documents(files: list[UploadFile] = File(...)) -> dict:
+    if len(files) > _MAX_UPLOAD_FILES:
+        raise HTTPException(status_code=400, detail=f"Maximum {_MAX_UPLOAD_FILES} files per request.")
+
+    UPLOADS_DIR.mkdir(exist_ok=True)
+    saved = []
+    for upload in files:
+        ext = Path(upload.filename or "").suffix.lower()
+        if ext not in _ALLOWED_UPLOAD_EXTENSIONS:
+            raise HTTPException(status_code=400, detail=f"File type not allowed: {upload.filename}")
+
+        content = await upload.read()
+        if len(content) > _MAX_UPLOAD_BYTES:
+            raise HTTPException(status_code=400, detail=f"File too large: {upload.filename}")
+
+        stored_name = f"{uuid.uuid4().hex}{ext}"
+        (UPLOADS_DIR / stored_name).write_bytes(content)
+        saved.append({"originalName": upload.filename, "storedName": stored_name})
+
+    return {"success": True, "files": saved}
 
 
 @app.post("/api/enterprise-onboarding", response_model=EnterpriseOnboardingResponse)
