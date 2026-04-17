@@ -21,6 +21,7 @@ import {
 
 const TOTAL_STEPS = 6
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 const goalOptions = [
   { key: 'explore_ai', label: 'Explore AI opportunities', icon: Rocket },
@@ -102,6 +103,23 @@ export default function EnterpriseGetStartedPage() {
     return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
   }
 
+  function getApiErrorMessage(rawValue, fallbackMessage) {
+    if (typeof rawValue !== 'string' || !rawValue.trim()) {
+      return fallbackMessage
+    }
+
+    try {
+      const parsed = JSON.parse(rawValue)
+      if (typeof parsed?.detail === 'string' && parsed.detail.trim()) {
+        return parsed.detail
+      }
+    } catch {
+      // Keep original string handling when body is not JSON.
+    }
+
+    return rawValue.length > 180 ? fallbackMessage : rawValue
+  }
+
   function addFiles(newFiles) {
     setFileUploadError('')
     const combined = [...documents]
@@ -169,7 +187,7 @@ export default function EnterpriseGetStartedPage() {
     }
 
     if (step === 6) {
-      return form.fullName.trim() && form.workEmail.trim()
+      return form.fullName.trim() && EMAIL_PATTERN.test(form.workEmail.trim())
     }
 
     return true
@@ -221,7 +239,7 @@ export default function EnterpriseGetStartedPage() {
         })
         if (!uploadResponse.ok) {
           const uploadError = await uploadResponse.text().catch(() => '')
-          throw new Error(uploadError || `Document upload failed (${uploadResponse.status})`)
+          throw new Error(getApiErrorMessage(uploadError, `Document upload failed (${uploadResponse.status})`))
         }
         const uploadResult = await uploadResponse.json()
         uploadedDocuments = uploadResult.files.map((f) => f.storedName)
@@ -266,7 +284,7 @@ export default function EnterpriseGetStartedPage() {
 
       if (!response.ok) {
         const errorText = await response.text().catch(() => '')
-        throw new Error(errorText || `Submission failed (${response.status})`)
+        throw new Error(getApiErrorMessage(errorText, `Submission failed (${response.status})`))
       }
 
       const result = await response.json()
@@ -286,7 +304,7 @@ export default function EnterpriseGetStartedPage() {
   return (
     <div className="flex min-h-screen flex-col overflow-y-auto bg-[#F5F7FA] text-slate-900 md:h-screen md:overflow-hidden">
       <Navbar activePage="onboarding" />
-      <ProgressBar step={step} />
+      <ProgressBar step={Math.min(step, TOTAL_STEPS)} />
 
       <main className="mx-auto flex w-full max-w-7xl flex-1 overflow-visible px-4 py-6 items-center justify-center sm:px-6 sm:py-8">
 
@@ -310,7 +328,7 @@ export default function EnterpriseGetStartedPage() {
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
                   </svg>
-                  Takes less than 1 minute
+                  Takes about 2 minutes
                 </div>
               </div>
 
@@ -328,8 +346,8 @@ export default function EnterpriseGetStartedPage() {
         {step === 2 ? (
           <StepCard>
             <h2 className="text-xl font-bold text-[#0B1F3A]">Tell us about your company</h2>
-            <p className="mt-0.5 text-sm text-slate-500">We only ask for the essentials.</p>
-            <div className="mt-3 space-y-2.5">
+            <p className="mt-1 text-sm text-slate-500">We only ask for the essentials.</p>
+            <div className="mt-5 space-y-3">
               <label className="block">
                 <span className="mb-1 block text-sm font-medium text-[#0B1F3A]">Company Name *</span>
                 <input
@@ -403,7 +421,7 @@ export default function EnterpriseGetStartedPage() {
                 </select>
               </label>
 
-              <div className="sticky bottom-0 mt-2.5 flex justify-between bg-white pt-2.5">
+              <div className="sticky bottom-0 mt-4 flex justify-between bg-white pt-3">
                 <button type="button" onClick={goBack} className="rounded-lg border border-slate-400 px-6 py-2 text-sm font-medium text-slate-700 hover:border-[#0B1F3A]">Back</button>
                 <button type="button" onClick={goNext} disabled={!canGoNext} className="rounded-lg bg-[#FF6B2C] px-8 py-2 text-sm font-medium text-white transition enabled:hover:bg-[#E65A20] disabled:opacity-45">Next</button>
               </div>
@@ -486,7 +504,7 @@ export default function EnterpriseGetStartedPage() {
           <StepCard>
             <h2 className="text-xl font-bold text-[#0B1F3A]">Tell us more <span className="text-base font-normal text-slate-400">(optional)</span></h2>
             <p className="mt-1 text-sm text-slate-500">The more you share, the better we can help.</p>
-            <div className="mt-4 space-y-4">
+            <div className="mt-5 space-y-4">
               <label className="block">
                 <span className="mb-1.5 block text-sm font-medium text-[#0B1F3A]">Your Expectations</span>
                 <textarea
@@ -509,7 +527,12 @@ export default function EnterpriseGetStartedPage() {
                   onClick={() => fileInputRef.current?.click()}
                   role="button"
                   tabIndex={0}
-                  onKeyDown={(e) => e.key === 'Enter' && fileInputRef.current?.click()}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault()
+                      fileInputRef.current?.click()
+                    }
+                  }}
                 >
                   <input
                     ref={fileInputRef}
@@ -578,6 +601,9 @@ export default function EnterpriseGetStartedPage() {
                   placeholder="name@company.com"
                   className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm focus:border-[#FF6B2C] focus:outline-none"
                 />
+                {form.workEmail.trim() && !EMAIL_PATTERN.test(form.workEmail.trim()) ? (
+                  <p className="mt-1 text-xs text-red-500">Enter a valid work email address.</p>
+                ) : null}
               </label>
               <label className="block">
                 <span className="mb-1.5 block text-sm font-medium text-[#0B1F3A]">Phone (Optional)</span>
@@ -603,7 +629,7 @@ export default function EnterpriseGetStartedPage() {
         ) : null}
 
         {step === TOTAL_STEPS + 1 ? (
-          <StepCard>
+          <StepCard className="max-w-md">
             <div className="flex h-full flex-col text-center">
               <h2 className="text-xl font-bold text-[#0B1F3A]">You're all set</h2>
               <p className="mt-2 text-sm text-slate-500">Your enterprise onboarding request has been received.</p>
