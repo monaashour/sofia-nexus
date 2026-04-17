@@ -1,4 +1,5 @@
 import { useMemo, useRef, useState } from 'react'
+import Navbar from '../components/Navbar'
 import {
   Rocket,
   Cog,
@@ -54,44 +55,21 @@ const industries = [
   'Technology',
 ]
 
-function PageHeader({ step }) {
+function ProgressBar({ step }) {
   return (
-    <div
-      className="relative flex-shrink-0 overflow-hidden"
-      style={{
-        height: '160px',
-        background:
-          'radial-gradient(ellipse at 68% 90%, rgba(255,100,10,0.85) 0%, rgba(255,130,20,0.4) 28%, transparent 55%), radial-gradient(ellipse at 85% 40%, rgba(180,60,0,0.3) 0%, transparent 40%), #070810',
-      }}
-    >
-      <div className="relative z-10 flex items-start justify-between px-8 pt-6">
-        <button
-          type="button"
-          onClick={() => { window.location.hash = '/' }}
-          className="leading-snug text-left"
-          aria-label="Go to home page"
-        >
-          <div className="text-sm font-bold tracking-[0.2em] text-white">SOFIA</div>
-          <div className="text-sm font-bold tracking-[0.2em] text-[#1CB5E0]">NEXUS</div>
-        </button>
-        <button
-          type="button"
-          onClick={() => { window.location.hash = '/' }}
-          className="mt-1 text-right"
-          aria-label="Go to home page"
-        >
-          <div className="mb-1 text-[11px] font-semibold text-white/55">Step {step} of {TOTAL_STEPS}</div>
-          <div className="flex gap-1.5">
-            {Array.from({ length: TOTAL_STEPS }).map((_, i) => (
-              <div
-                key={i}
-                className={`h-[3px] w-8 rounded-full transition-colors ${
-                  i < step ? 'bg-[#FF6B2C]' : 'bg-white/25'
-                }`}
-              />
-            ))}
-          </div>
-        </button>
+    <div className="flex-shrink-0 border-b border-slate-200 bg-white px-4 py-3 sm:px-6">
+      <div className="mx-auto flex max-w-7xl items-center justify-between">
+        <p className="text-xs font-semibold text-slate-600 uppercase tracking-wider">Step {step} of {TOTAL_STEPS}</p>
+        <div className="flex gap-1.5">
+          {Array.from({ length: TOTAL_STEPS }).map((_, i) => (
+            <div
+              key={i}
+              className={`h-1 w-6 rounded-full transition-colors ${
+                i < step ? 'bg-[#FF6B2C]' : 'bg-slate-300'
+              }`}
+            />
+          ))}
+        </div>
       </div>
     </div>
   )
@@ -99,15 +77,7 @@ function PageHeader({ step }) {
 
 function StepCard({ children }) {
   return (
-    <div
-      className="relative z-20 w-full max-w-sm overflow-y-auto rounded-2xl bg-white px-8 pt-8 pb-6 shadow-xl"
-      style={{
-        height: 'calc(100vh - 160px)',
-        maxHeight: 'calc(100vh - 160px)',
-        minHeight: 'calc(100vh - 160px)',
-        marginTop: '-40px',
-      }}
-    >
+    <div className="w-full max-w-2xl overflow-y-auto rounded-2xl bg-white px-6 py-8 shadow-lg sm:px-8">
       {children}
     </div>
   )
@@ -314,10 +284,11 @@ export default function EnterpriseGetStartedPage() {
   }
 
   return (
-    <div className="flex h-screen flex-col overflow-hidden bg-[#ECEEF2]">
-      <PageHeader step={step} />
+    <div className="flex min-h-screen flex-col overflow-y-auto bg-[#F5F7FA] text-slate-900 md:h-screen md:overflow-hidden">
+      <Navbar activePage="onboarding" />
+      <ProgressBar step={step} />
 
-      <main className="flex flex-1 items-start justify-center overflow-visible px-4 pt-0 pb-4">
+      <main className="mx-auto flex w-full max-w-7xl flex-1 overflow-visible px-4 py-6 items-center justify-center sm:px-6 sm:py-8">
 
         {step === 1 ? (
           <StepCard>
