@@ -75,9 +75,9 @@ function ProgressBar({ step }) {
   )
 }
 
-function StepCard({ children }) {
+function StepCard({ children, className = '' }) {
   return (
-    <div className="w-full max-w-2xl overflow-y-auto rounded-2xl bg-white px-6 py-8 shadow-lg sm:px-8">
+    <div className={`w-full max-w-2xl overflow-y-auto rounded-2xl bg-white px-6 py-8 shadow-lg sm:px-8 ${className}`}>
       {children}
     </div>
   )
@@ -291,14 +291,14 @@ export default function EnterpriseGetStartedPage() {
       <main className="mx-auto flex w-full max-w-7xl flex-1 overflow-visible px-4 py-6 items-center justify-center sm:px-6 sm:py-8">
 
         {step === 1 ? (
-          <StepCard>
+          <StepCard className="max-w-md">
             <div className="flex h-full flex-col text-center">
               <div className="mt-10">
                 <span className="inline-block rounded-full border border-[#FF6B2C] bg-[#FFF4EE] px-5 py-1.5 text-[10px] font-bold uppercase tracking-widest text-[#FF6B2C]">
                   Enterprise Onboarding
                 </span>
                 <h1 className="mt-6 text-xl font-bold leading-tight text-[#0B1F3A]">
-                  Let us understand<br />your business
+                  Let's understand<br />your business
                 </h1>
                 <p className="mt-3 text-sm leading-relaxed text-slate-500">
                   A quick few questions to tailor<br />the right AI solution for you
@@ -310,7 +310,7 @@ export default function EnterpriseGetStartedPage() {
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
                   </svg>
-                  Takes less than 1 min
+                  Takes less than 1 minute
                 </div>
               </div>
 
