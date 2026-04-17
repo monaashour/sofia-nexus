@@ -4,6 +4,8 @@ import SolutionsPage from './pages/SolutionsPage'
 import AboutPage from './pages/AboutPage'
 import ContactPage from './pages/ContactPage'
 import ComingSoonPage from './pages/ComingSoonPage'
+import EnterpriseGetStartedPage from './pages/EnterpriseGetStartedPage'
+import ForgotPasswordPage from './pages/ForgotPasswordPage'
 
 function getRouteFromHash() {
   const hash = window.location.hash.replace('#', '')
@@ -35,6 +37,14 @@ export default function App() {
     const params = new URLSearchParams(route.slice('/coming-soon'.length))
     const type = params.get('type') || 'leads'
     return <ComingSoonPage scope={type} />
+  }
+
+  if (route === '/enterprise-get-started') {
+    return <EnterpriseGetStartedPage />
+  }
+
+  if (route === '/forgot-password') {
+    return <ForgotPasswordPage />
   }
 
   return <HomePage />
