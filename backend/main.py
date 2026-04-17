@@ -546,3 +546,113 @@ def forgot_password(payload: ForgotPasswordRequest) -> ForgotPasswordResponse:
             else f"{generic_message} ({email_message})"
         ),
     )
+
+
+# ── Partner onboarding ────────────────────────────────────────────────────────
+
+class PartnerContactInfo(BaseModel):
+    fullName: str = Field(min_length=1)
+    workEmail: str = Field(min_length=1)
+    companyName: str = Field(min_length=1)
+    jobTitle: str = ""
+    phone: str = ""
+    partnershipInterest: str = ""
+
+
+class PartnerBusinessInfo(BaseModel):
+    website: str = ""
+    industry: str = ""
+    companySize: str = ""
+    country: str = ""
+    yearsInBusiness: str = ""
+    description: str = ""
+
+
+class PartnerOnboardingRequest(BaseModel):
+    profile: str = "ai_partner"
+    submittedAt: str
+    contact: PartnerContactInfo
+    business: PartnerBusinessInfo
+    capabilities: list[str] = []
+    services: list[str] = []
+    regions: list[str] = []
+
+
+class PartnerOnboardingResponse(BaseModel):
+    success: bool
+    partnerId: str
+    emailSent: bool
+    message: str
+
+
+def init_partner_db() -> None:
+    with get_db_connection() as connection:
+        connection.execute(
+            """
+            CREATE TABLE IF NOT EXISTS partner_submissions (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                partner_id TEXT NOT NULL,
+                email TEXT NOT NULL,
+                payload_json TEXT NOT NULL,
+                email_sent INTEGER NOT NULL,
+                email_message TEXT NOT NULL,
+                created_at TEXT NOT NULL
+            )
+            """
+        )
+        connection.commit()
+
+
+init_partner_db()
+
+
+@app.post("/api/partner-onboarding", response_model=PartnerOnboardingResponse)
+def partner_onboarding(payload: PartnerOnboardingRequest) -> PartnerOnboardingResponse:
+    partner_id = f"PA-{uuid.uuid4().hex[:8].upper()}"
+    temporary_password = generate_temporary_password()
+    password_hash = create_password_hash(temporary_password)
+
+    upsert_user_account(
+        email=payload.contact.workEmail,
+        company_id=partner_id,
+        company_name=payload.contact.companyName,
+        full_name=payload.contact.fullName,
+        password_hash=password_hash,
+    )
+
+    email_sent, email_message = send_onboarding_credentials_email(
+        recipient_email=payload.contact.workEmail,
+        recipient_name=payload.contact.fullName,
+        company_name=payload.contact.companyName,
+        company_id=partner_id,
+        temporary_password=temporary_password,
+    )
+
+    with get_db_connection() as connection:
+        connection.execute(
+            """
+            INSERT INTO partner_submissions (
+                partner_id, email, payload_json, email_sent, email_message, created_at
+            ) VALUES (?, ?, ?, ?, ?, ?)
+            """,
+            (
+                partner_id,
+                payload.contact.workEmail.lower(),
+                json.dumps(payload.model_dump(), ensure_ascii=True),
+                int(email_sent),
+                email_message,
+                datetime.now(timezone.utc).isoformat(),
+            ),
+        )
+        connection.commit()
+
+    return PartnerOnboardingResponse(
+        success=True,
+        partnerId=partner_id,
+        emailSent=email_sent,
+        message=(
+            "Partner application received. Credentials email sent."
+            if email_sent
+            else f"Partner application received, but credentials email was not sent ({email_message})."
+        ),
+    )

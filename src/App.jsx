@@ -5,6 +5,7 @@ import AboutPage from './pages/AboutPage'
 import ContactPage from './pages/ContactPage'
 import ComingSoonPage from './pages/ComingSoonPage'
 import EnterpriseGetStartedPage from './pages/EnterpriseGetStartedPage'
+import PartnerGetStartedPage from './pages/PartnerGetStartedPage'
 import ForgotPasswordPage from './pages/ForgotPasswordPage'
 
 function getRouteFromHash() {
@@ -41,6 +42,10 @@ export default function App() {
 
   if (route === '/enterprise-get-started') {
     return <EnterpriseGetStartedPage />
+  }
+
+  if (route === '/partner-get-started') {
+    return <PartnerGetStartedPage />
   }
 
   if (route === '/forgot-password') {

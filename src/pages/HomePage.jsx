@@ -171,6 +171,7 @@ export default function HomePage() {
                 </button>
                 <button
                   type="button"
+                  onClick={() => { window.location.hash = '/partner-get-started' }}
                   className="w-full rounded-lg bg-[#0B1F3A] px-4 py-2.5 text-left font-medium text-white transition hover:bg-[#FF6B2C]"
                 >
                   <span className="flex items-center gap-2 text-sm"><Handshake className="h-4 w-4" />AI Partner</span>
