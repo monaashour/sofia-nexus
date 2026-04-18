@@ -309,7 +309,7 @@ export default function EnterpriseGetStartedPage() {
       <main className="mx-auto flex w-full max-w-7xl flex-1 overflow-visible px-4 py-6 items-center justify-center sm:px-6 sm:py-8">
 
         {step === 1 ? (
-          <StepCard className="max-w-md">
+          <StepCard className="max-w-sm">
             <div className="flex h-full flex-col text-center">
               <div className="mt-10">
                 <span className="inline-block rounded-full border border-[#FF6B2C] bg-[#FFF4EE] px-5 py-1.5 text-[10px] font-bold uppercase tracking-widest text-[#FF6B2C]">

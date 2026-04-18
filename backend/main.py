@@ -269,6 +269,57 @@ Sofia Nexus Team
         return False, f"Email delivery failed: {error}"
 
 
+def send_login_confirmation_email(
+    recipient_email: str,
+    recipient_name: str,
+    company_name: str,
+    company_id: str,
+) -> tuple[bool, str]:
+    smtp_host = os.getenv("SMTP_HOST", "")
+    smtp_port = int(os.getenv("SMTP_PORT", "587"))
+    smtp_username = os.getenv("SMTP_USERNAME", "")
+    smtp_password = os.getenv("SMTP_PASSWORD", "")
+    smtp_from_email = os.getenv("SMTP_FROM_EMAIL", smtp_username)
+    smtp_use_tls = os.getenv("SMTP_USE_TLS", "true").lower() == "true"
+    app_url = os.getenv("APP_LOGIN_URL", "http://localhost:5173")
+
+    if not smtp_host or not smtp_username or not smtp_password or not smtp_from_email:
+        return False, "SMTP settings are missing"
+
+    message = EmailMessage()
+    message["Subject"] = "Sofia Nexus login confirmation"
+    message["From"] = smtp_from_email
+    message["To"] = recipient_email
+    message.set_content(
+        f"""Hello {recipient_name},
+
+You successfully logged in to Sofia Nexus.
+
+Company Name: {company_name}
+Company ID: {company_id}
+Login Email: {recipient_email}
+
+If this wasn't you, please contact support immediately.
+
+App URL: {app_url}
+
+Best regards,
+Sofia Nexus Team
+"""
+    )
+
+    try:
+        context = ssl.create_default_context()
+        with smtplib.SMTP(smtp_host, smtp_port, timeout=20) as server:
+            if smtp_use_tls:
+                server.starttls(context=context)
+            server.login(smtp_username, smtp_password)
+            server.send_message(message)
+        return True, "Login confirmation email sent"
+    except Exception as error:  # pragma: no cover - environment specific
+        return False, f"Email delivery failed: {error}"
+
+
 def upsert_user_account(
     email: str,
     company_id: str,
@@ -420,7 +471,7 @@ def login(payload: LoginRequest) -> LoginResponse:
     with get_db_connection() as connection:
         user = connection.execute(
             """
-            SELECT email, company_id, full_name, password_hash, must_change_password
+            SELECT email, company_id, company_name, full_name, password_hash, must_change_password
             FROM user_accounts
             WHERE email = ?
             """,
@@ -437,6 +488,15 @@ def login(payload: LoginRequest) -> LoginResponse:
     SESSION_TOKENS[token] = payload.email.lower()
 
     must_change_password = bool(user["must_change_password"])
+    
+    # Send login confirmation email with account details
+    send_login_confirmation_email(
+        recipient_email=user["email"],
+        recipient_name=user["full_name"],
+        company_name=user["company_name"],
+        company_id=user["company_id"],
+    )
+    
     return LoginResponse(
         success=True,
         companyId=user["company_id"],
