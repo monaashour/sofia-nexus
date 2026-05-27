@@ -1,18 +1,20 @@
 # Affiliate Email Assets
 
-This folder contains the Sofia Nexus partner outreach email package.
+This folder contains the final Sofia Nexus partner outreach email package.
 
 ## Main deliverable
 
 - `brand/sofia-nexus-partner-outreach-email.html`
 
+## Preview
+
+- `preview.png`
+
 ## Included files
 
-- Production HTML email
-- Plain-text fallback
-- Alternate HTML variants
-- Brand image assets used by the templates
+- Final production HTML email
+- Brand image assets used by the template
 
 ## Notes
 
-The templates are table-based and designed for email-client compatibility.
+The template is table-based and designed for email-client compatibility.

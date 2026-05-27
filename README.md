@@ -1,3 +1,12 @@
+# Sofia Nexus
+
+## Affiliate Email Package
+
+- Final email HTML: `affiliate-email/brand/sofia-nexus-partner-outreach-email.html`
+- Preview image: `affiliate-email/preview.png`
+
+The repository also includes a packaged partner outreach email under `affiliate-email/` with its required brand assets.
+
 # React + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
